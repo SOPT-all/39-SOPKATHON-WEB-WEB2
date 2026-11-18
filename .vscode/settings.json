@@ -1,7 +1,9 @@
 {
+  "typescript.preferences.importModuleSpecifier": "non-relative",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
+    "typescript.preferences.importModuleSpecifier": "non-relative",
     "source.fixAll.eslint": "explicit"
   }
 }
