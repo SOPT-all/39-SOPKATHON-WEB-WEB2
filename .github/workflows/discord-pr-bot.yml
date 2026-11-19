@@ -1,0 +1,48 @@
+name: Discord PR Bot
+
+# PR마다 디스코드 채널에 카드와 스레드를 만들고, 이후 소식을 그 스레드에 쌓아요.
+# 출처: SOPT-all/39-STUDY-WEB-OPTIMUS 의 Discord PR Bot (조영찬 님 제작)
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - review_requested
+      - review_request_removed
+      - edited
+      - synchronize
+      - closed
+
+permissions: {}
+
+# 같은 PR의 이벤트가 동시에 들어와도 순서대로 처리해서 스레드가 중복으로 생기지 않게 해요.
+concurrency:
+  group: discord-pr-bot-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    name: 디스코드 알림
+    # 포크에서 올린 PR은 시크릿을 쓸 수 없어서 건너뛰어요.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: write # 디스코드 메시지 · 스레드 id를 PR 댓글에 저장
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: Notify Discord
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_PR_CHANNEL_ID }}
+          DISCORD_USER_MAP: ${{ secrets.DISCORD_USER_MAP }}
+        run: bash .github/scripts/discord-pr-bot.sh
