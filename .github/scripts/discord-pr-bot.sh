@@ -132,8 +132,9 @@ EOF
   echo "${text:0:1900}"
 }
 
+# flags 4(SUPPRESS_EMBEDS): PR 링크의 미리보기 상자가 카드 아래에 붙어 같은 내용이 두 번 보이는 것을 막는다.
 message_json() {
-  jq -n --arg c "$1" '{content: $c, allowed_mentions: {parse: ["users"]}}'
+  jq -n --arg c "$1" '{content: $c, allowed_mentions: {parse: ["users"]}, flags: 4}'
 }
 
 # ---------- 저장된 Discord 메타데이터 조회 ----------
