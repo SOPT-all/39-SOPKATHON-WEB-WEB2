@@ -15,6 +15,7 @@ permissions:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  SITE_URL: https://39-sopkathon-web-web2.vercel.app
 
 jobs:
   deploy:
@@ -45,3 +46,38 @@ jobs:
 
       - name: Deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 배포 결과(성공 · 실패)를 디스코드에 알려요. 알림이 실패해도 배포 결과에는 영향을 주지 않아요.
+      - name: Notify Discord
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_PR_CHANNEL_ID }}
+          DISCORD_USER_MAP: ${{ secrets.DISCORD_USER_MAP }}
+          JOB_STATUS: ${{ job.status }}
+          ACTOR: ${{ github.actor }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$DISCORD_BOT_TOKEN" ] || [ -z "$DISCORD_CHANNEL_ID" ]; then
+            echo "::notice::디스코드 시크릿이 없어서 알림을 건너뛰어요."
+            exit 0
+          fi
+
+          # GitHub 아이디를 디스코드 멘션으로 바꿔요. 연결 표에 없으면 아이디를 그대로 적어요.
+          [ -n "$DISCORD_USER_MAP" ] || DISCORD_USER_MAP='{}'
+          DISCORD_ID=$(jq -r --arg l "$ACTOR" '.[$l] // empty' <<< "$DISCORD_USER_MAP")
+          if [ -n "$DISCORD_ID" ]; then WHO="<@$DISCORD_ID>"; else WHO="@$ACTOR"; fi
+
+          if [ "$JOB_STATUS" = "success" ]; then
+            HEAD="🚀 **배포 완료** <$SITE_URL>"
+          else
+            HEAD="❌ **배포 실패** [실행 기록 보기](<$RUN_URL>)"
+          fi
+          TEXT="$HEAD"$'\n'"배포한 사람: $WHO · 커밋 \`${GITHUB_SHA:0:7}\`"
+
+          curl -sS --fail-with-body -X POST "https://discord.com/api/v10/channels/$DISCORD_CHANNEL_ID/messages" \
+            -H "Authorization: Bot $DISCORD_BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -n --arg c "$TEXT" '{content: $c, allowed_mentions: {parse: ["users"]}, flags: 4}')" \
+            > /dev/null
