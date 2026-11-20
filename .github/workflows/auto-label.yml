@@ -3,7 +3,7 @@ name: Auto label
 on:
   issues:
     types: [opened, edited, reopened, assigned, unassigned]
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, synchronize]
 
 concurrency:
