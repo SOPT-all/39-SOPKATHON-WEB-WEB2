@@ -1,0 +1,154 @@
+name: Create issue branch
+
+on:
+  issues:
+    types: [assigned]
+
+concurrency:
+  group: create-issue-branch-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  create-branch:
+    name: 이슈 브랜치 생성
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create linked branch
+        continue-on-error: true
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const issue_number = issue.number;
+
+            const commentOnce = async (marker, body) => {
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                { owner, repo, issue_number, per_page: 100 },
+              );
+              if (comments.some((comment) => comment.body?.includes(marker))) return;
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `${marker}\n${body}`,
+              });
+            };
+
+            try {
+              const type = issue.title
+                .match(/^\[(init|feat|fix|chore|docs)\]\s+/i)?.[1]
+                .toLowerCase();
+
+              if (!type) {
+                await commentOnce(
+                  '<!-- create-issue-branch:invalid-type -->',
+                  '브랜치를 만들지 못했어요. 이슈 제목을 `[Feat] 내용`, `[Fix] 내용`과 같은 형식으로 작성한 뒤 담당자를 다시 지정해 주세요.',
+                );
+                return;
+              }
+
+              const lines = (issue.body ?? '').split(/\r?\n/);
+              const headingIndex = lines.findIndex((line) =>
+                /^#{2,3}\s+🌿 브랜치 기능명\s*$/.test(line.trim()),
+              );
+              const sectionLines =
+                headingIndex < 0 ? [] : lines.slice(headingIndex + 1);
+              const nextHeadingIndex = sectionLines.findIndex((line) =>
+                /^#{1,6}\s+/.test(line.trim()),
+              );
+              const valueLines =
+                nextHeadingIndex < 0
+                  ? sectionLines
+                  : sectionLines.slice(0, nextHeadingIndex);
+              const slug = valueLines
+                .map((line) => line.trim())
+                .find(
+                  (line) =>
+                    line && line !== '_No response_',
+                )
+                ?.replace(/^`|`$/g, '');
+
+              if (
+                headingIndex < 0 ||
+                !slug ||
+                !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
+              ) {
+                await commentOnce(
+                  '<!-- create-issue-branch:invalid-slug -->',
+                  '`브랜치 기능명`을 영문 소문자, 숫자, 하이픈으로 작성한 뒤 담당자를 다시 지정해 주세요. 예: `home-card-list`',
+                );
+                return;
+              }
+
+              const branchName = `${type}/${slug}/#${issue.number}`;
+              const marker = `<!-- create-issue-branch:${branchName} -->`;
+              const branchPath = branchName
+                .split('/')
+                .map(encodeURIComponent)
+                .join('/');
+              const branchUrl = `${context.serverUrl}/${owner}/${repo}/tree/${branchPath}`;
+              const checkoutGuide = [
+                '',
+                '로컬에서도 바로 이어서 작업할 수 있게 준비했어요.',
+                '',
+                '```bash',
+                'git fetch origin',
+                `git checkout ${branchName}`,
+                '```',
+              ].join('\n');
+
+              try {
+                await github.rest.git.getRef({
+                  owner,
+                  repo,
+                  ref: `heads/${branchName}`,
+                });
+                await commentOnce(
+                  marker,
+                  `### 보성녹차🍵🍃\n\n이미 우려둔 작업 브랜치 [\`${branchName}\`](${branchUrl})가 있어요. 그대로 사용하면 돼요.${checkoutGuide}`,
+                );
+                return;
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+
+              const base = await github.rest.git.getRef({
+                owner,
+                repo,
+                ref: 'heads/develop',
+              });
+
+              await github.graphql(
+                `mutation CreateLinkedBranch($issueId: ID!, $name: String!, $oid: GitObjectID!) {
+                  createLinkedBranch(input: { issueId: $issueId, name: $name, oid: $oid }) {
+                    issue {
+                      number
+                    }
+                  }
+                }`,
+                {
+                  issueId: issue.node_id,
+                  name: branchName,
+                  oid: base.data.object.sha,
+                },
+              );
+
+              await commentOnce(
+                marker,
+                `### 보성녹차🍵🍃\n\n새 작업 브랜치를 우려왔어요! \`develop\`에서 [\`${branchName}\`](${branchUrl})를 만들고 이 이슈에 연결했어요.${checkoutGuide}`,
+              );
+            } catch (error) {
+              core.warning(`브랜치 자동 생성 실패: ${error.message}`);
+              await commentOnce(
+                '<!-- create-issue-branch:failed -->',
+                `브랜치 자동 생성에 실패했어요. [실행 기록](${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId})을 확인해 주세요. 이 오류는 이슈 작업을 막지 않아요.`,
+              );
+            }
