@@ -59,12 +59,20 @@ jobs:
               const headingIndex = lines.findIndex((line) =>
                 /^#{2,3}\s+🌿 브랜치 기능명\s*$/.test(line.trim()),
               );
-              const slug = lines
-                .slice(headingIndex + 1)
+              const sectionLines =
+                headingIndex < 0 ? [] : lines.slice(headingIndex + 1);
+              const nextHeadingIndex = sectionLines.findIndex((line) =>
+                /^#{1,6}\s+/.test(line.trim()),
+              );
+              const valueLines =
+                nextHeadingIndex < 0
+                  ? sectionLines
+                  : sectionLines.slice(0, nextHeadingIndex);
+              const slug = valueLines
                 .map((line) => line.trim())
                 .find(
                   (line) =>
-                    line && !line.startsWith('#') && line !== '_No response_',
+                    line && line !== '_No response_',
                 )
                 ?.replace(/^`|`$/g, '');
 
