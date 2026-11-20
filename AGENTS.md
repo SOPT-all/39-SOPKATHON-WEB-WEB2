@@ -70,7 +70,23 @@ src
 ```
 
 - 한 페이지에서만 쓰면 `pages/페이지명/` 안에 두고, 두 페이지 이상에서 쓰면 `shared/`로 올려요.
-- 페이지 전용 코드는 `pages/페이지명/` 아래에 `components`, `api`, `hooks` 폴더를 만들어 넣어요.
+- 에셋(아이콘, 이미지)만 예외예요. 한 페이지에서만 써도 전부 `shared/assets`에 둬요.
+
+### 페이지 폴더
+
+페이지 전용 코드는 아래 모양으로 둬요. 필요한 폴더만 만들고, 빈 폴더를 미리 만들지 않아요.
+
+```
+src/pages/home
+├── home-page.tsx       # 페이지 컴포넌트
+├── components          # 이 페이지에서만 쓰는 컴포넌트
+│   └── home-card.tsx
+├── api                 # 이 페이지에서만 쓰는 API 함수와 타입
+│   ├── get-home.ts
+│   └── types.ts
+└── hooks               # 이 페이지에서만 쓰는 훅
+    └── use-home.ts
+```
 
 ### 새 페이지를 추가할 때
 
@@ -107,7 +123,7 @@ Figma 디자인을 코드로 옮길 때 따르는 규칙이에요. 세 명이 �
 
 ### 에셋
 
-- 아이콘은 `src/shared/assets/icons/ic-이름.svg`, 이미지는 `src/shared/assets/images/img-이름.png`로 저장해요.
+- 아이콘은 `src/shared/assets/icons/ic-이름.svg`, 이미지는 `src/shared/assets/images/img-이름.png`로 저장해요. 한 페이지에서만 쓰는 에셋도 여기에 둬요.
 - Figma에서 내려받은 에셋만 써요. 아이콘 패키지를 설치하거나 다른 이미지로 대신하지 않아요.
 - SVG 아이콘은 `?react`를 붙여 컴포넌트로 불러와요.
 
