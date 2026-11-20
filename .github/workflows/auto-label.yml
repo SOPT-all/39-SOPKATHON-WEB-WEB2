@@ -1,0 +1,90 @@
+name: Auto label
+
+on:
+  issues:
+    types: [opened, edited, reopened, assigned, unassigned]
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+
+concurrency:
+  group: auto-label-${{ github.event_name }}-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  label:
+    name: 타입 · 이름 라벨 적용
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Apply labels
+        continue-on-error: true
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const item = context.payload.issue ?? context.payload.pull_request;
+            const issue_number = item.number;
+
+            const typeLabels = {
+              init: '🌱 init',
+              feat: '✨ feat',
+              fix: '🐛 fix',
+              chore: '🛠️ chore',
+              docs: '📝 docs',
+            };
+
+            const memberLabels = {
+              kimjonghyun2: '🌙 종현',
+              bosung0505: '🍵 보성',
+              hycho04: '🐱 현영',
+            };
+
+            const managedTypeLabels = new Set(Object.values(typeLabels));
+            const managedMemberLabels = new Set(Object.values(memberLabels));
+            const desiredLabels = new Set();
+
+            const typePattern = context.payload.issue
+              ? /^\[(init|feat|fix|chore|docs)\]\s+/i
+              : /^(init|feat|fix|chore|docs):\s+/i;
+            const type = item.title.match(typePattern)?.[1].toLowerCase();
+
+            if (type) {
+              desiredLabels.add(typeLabels[type]);
+            }
+
+            if (context.payload.issue) {
+              for (const assignee of item.assignees ?? []) {
+                const memberLabel = memberLabels[assignee.login.toLowerCase()];
+                if (memberLabel) desiredLabels.add(memberLabel);
+              }
+            } else {
+              const memberLabel = memberLabels[item.user.login.toLowerCase()];
+              if (memberLabel) desiredLabels.add(memberLabel);
+            }
+
+            const { data: current } = await github.rest.issues.get({
+              owner,
+              repo,
+              issue_number,
+            });
+            const labels = current.labels
+              .map((label) => (typeof label === 'string' ? label : label.name))
+              .filter(Boolean)
+              .filter(
+                (label) =>
+                  !managedTypeLabels.has(label) && !managedMemberLabels.has(label),
+              );
+
+            labels.push(...desiredLabels);
+
+            await github.rest.issues.setLabels({
+              owner,
+              repo,
+              issue_number,
+              labels,
+            });
