@@ -13,3 +13,7 @@ PLAY SOPT 39기 솝커톤 웹 2조 웹 레포지토리 🌙☕🍀
 pnpm install
 pnpm dev
 ```
+
+## 개발 가이드
+
+- [PR 자동 코드 리뷰 운영 가이드](./docs/pr-review-guide.md)
