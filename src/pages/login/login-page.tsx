@@ -1,33 +1,52 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { postLogin } from '@/pages/login/api/post-login';
 import ImgWordmark from '@/shared/assets/images/img-wordmark.svg?react';
 import Input from '@/shared/components/input';
 import LovebirdsAnimation from '@/shared/components/lovebirds-animation';
 import ServiceEntryButton from '@/shared/components/service-entry-button';
 import { ROUTES } from '@/shared/constants/routes';
+import { setUserId } from '@/shared/utils/user-id';
 
 const PHONE_NUMBER_LENGTH = 11;
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const isValid = phoneNumber.length === PHONE_NUMBER_LENGTH;
+  const canSubmit = isValid && !isSubmitting;
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     // 숫자만 남겨요. 하이픈을 넣어도 지워져요.
     const digits = event.target.value.replace(/\D/g, '');
 
     setPhoneNumber(digits.slice(0, PHONE_NUMBER_LENGTH));
+    setErrorMessage('');
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isValid) return;
+    if (!canSubmit) return;
 
-    navigate(ROUTES.ONBOARDING);
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const { userId, onboarded } = await postLogin({ phoneNumber });
+
+      // 저장해 두면 이후 모든 요청에 X-User-Id 헤더가 붙어요.
+      setUserId(userId);
+      // 온보딩을 마친 사람은 매칭으로, 처음인 사람은 온보딩으로 보내요.
+      navigate(onboarded ? ROUTES.MATCHING : ROUTES.ONBOARDING);
+    } catch {
+      setErrorMessage('입장하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,12 +83,17 @@ const LoginPage = () => {
               value={phoneNumber}
               onChange={handlePhoneNumberChange}
             />
+            {errorMessage && (
+              <p role="alert" className="text-text-m-14 text-error">
+                {errorMessage}
+              </p>
+            )}
           </div>
         </div>
         <div className="shrink-0 px-5 pt-2 pb-5">
           <ServiceEntryButton
             type="submit"
-            status={isValid ? 'active' : 'disabled'}
+            status={canSubmit ? 'active' : 'disabled'}
             showArrow
           />
         </div>

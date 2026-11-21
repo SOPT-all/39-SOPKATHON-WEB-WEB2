@@ -1,11 +1,14 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { postOnboarding } from '@/pages/onboarding/api/post-onboarding';
 import BirthYearDropdown from '@/pages/onboarding/components/birth-year-dropdown';
 import BirthYearSheet from '@/pages/onboarding/components/birth-year-sheet';
 import GenderSelect from '@/pages/onboarding/components/gender-select';
 import PhotoPicker from '@/pages/onboarding/components/photo-picker';
 import type { Gender } from '@/pages/onboarding/types';
+import { compressImage } from '@/pages/onboarding/utils/compress-image';
+import { getCurrentPosition } from '@/pages/onboarding/utils/get-current-position';
 import Input from '@/shared/components/input';
 import ServiceEntryButton from '@/shared/components/service-entry-button';
 import { ROUTES } from '@/shared/constants/routes';
@@ -19,12 +22,15 @@ const OnboardingPage = () => {
   const [gender, setGender] = useState<Gender | null>(null);
   const [birthYear, setBirthYear] = useState<number | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const isValid =
     photo !== null &&
     nickname.trim().length > 0 &&
     gender !== null &&
     birthYear !== null;
+  const canSubmit = isValid && !isSubmitting;
 
   const handleNicknameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value.slice(0, NICKNAME_MAX_LENGTH));
@@ -35,12 +41,40 @@ const OnboardingPage = () => {
     setIsSheetOpen(false);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isValid) return;
+    if (!canSubmit) return;
 
-    navigate(ROUTES.MATCHING);
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    // 근처 사람을 찾으려면 내 위치가 꼭 필요해요. 처음이면 브라우저가 권한을 물어봐요.
+    let position;
+
+    try {
+      position = await getCurrentPosition();
+    } catch {
+      setErrorMessage(
+        '위치를 확인하지 못했어요. 위치 권한을 허용한 뒤 다시 눌러 주세요.',
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      await postOnboarding(await compressImage(photo), {
+        nickname: nickname.trim(),
+        gender,
+        // 서버는 태어난 년도가 아니라 나이를 받아요.
+        age: new Date().getFullYear() - birthYear,
+        ...position,
+      });
+      navigate(ROUTES.MATCHING);
+    } catch {
+      setErrorMessage('등록하지 못했어요. 잠시 후 다시 시도해 주세요.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,10 +121,15 @@ const OnboardingPage = () => {
             </div>
           </div>
         </div>
-        <div className="shrink-0 px-5 pt-2 pb-5">
+        <div className="flex shrink-0 flex-col gap-2 px-5 pt-2 pb-5">
+          {errorMessage && (
+            <p role="alert" className="text-text-m-14 text-error">
+              {errorMessage}
+            </p>
+          )}
           <ServiceEntryButton
             type="submit"
-            status={isValid ? 'active' : 'disabled'}
+            status={canSubmit ? 'active' : 'disabled'}
           >
             시작하기
           </ServiceEntryButton>

@@ -1,5 +1,8 @@
-import type { Place } from '@/pages/place/types';
+import type { Place } from '@/pages/place/api/types';
 import IcArrowRight from '@/shared/assets/icons/ic-arrow-right.svg?react';
+
+// 서버는 거리를 미터로 줘요.
+const METERS_PER_KM = 1000;
 
 interface PlaceCardProps {
   place: Place;
@@ -29,7 +32,7 @@ const PlaceCard = ({ place }: PlaceCardProps) => {
                 {place.name}
               </h2>
               <p className="shrink-0 text-text-m-12 text-grey-3">
-                {place.distance.toFixed(1)}KM
+                {(place.distance / METERS_PER_KM).toFixed(1)}KM
               </p>
             </div>
             <p className="truncate text-text-m-14 text-grey-5">
