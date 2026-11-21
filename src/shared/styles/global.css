@@ -31,6 +31,7 @@
   --color-grey-8: #2d2d2d;
   --color-grey-9: #242424;
   --color-grey-10: #1d1d1d;
+  --color-grey-shadow: rgb(174 174 174 / 0.25);
 
   /* Primary */
   --color-primary-100: #f8467b;
