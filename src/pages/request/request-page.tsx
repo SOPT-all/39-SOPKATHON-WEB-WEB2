@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
-import IcCall from '@/shared/assets/icons/ic-call.svg?react';
 import matchingMan from '@/shared/assets/images/img-matching-man.png';
 import matchingWoman from '@/shared/assets/images/img-matching-woman.png';
 import profileWoman from '@/shared/assets/images/img-owner-profile-woman-1.png';
+import CallConfirmModal from '@/shared/components/call-confirm-modal';
+import Message from '@/shared/components/message';
+import SmallButton from '@/shared/components/small-button';
 import { ROUTES } from '@/shared/constants/routes';
 
 const REQUESTS = [
@@ -40,14 +42,15 @@ const REQUESTS = [
 ];
 
 const RequestPage = () => {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'waiting' | 'connected'>('waiting');
-  const [calling, setCalling] = useState(false);
+  const [callingIndex, setCallingIndex] = useState<number | null>(null);
 
   return (
     <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
-      <header className="flex shrink-0 items-center gap-3 px-5 pt-5 pb-4">
+      <header className="flex shrink-0 items-center justify-between gap-2 px-5 pt-5 pb-4">
         <h1 className="text-title-b-22">받은 쪽지</h1>
-        <p className="text-text-m-14 text-grey-4">
+        <p className="text-right text-text-m-14 text-grey-4">
           나에게 쪽지를 보낸 사람들이에요.
         </p>
       </header>
@@ -93,53 +96,34 @@ const RequestPage = () => {
                   </span>
                 </span>
               </Link>
-              <button
-                type="button"
-                onClick={() => setCalling(true)}
-                className="flex shrink-0 items-center gap-2 rounded-[10px] bg-primary-100 px-4 py-2 text-text-m-14 text-white"
-              >
-                전화 걸기 <IcCall className="size-4" />
-              </button>
+              <SmallButton
+                className="shrink-0 px-4 text-text-m-14"
+                onClick={() => setCallingIndex(index)}
+              />
             </div>
-            <p className="mt-2 truncate rounded-[10px] bg-grey-1 px-4 py-2.5 text-text-m-12">
-              {person.message}
-            </p>
+            <Message className="mt-2 !h-[38px] !rounded-[10px] !bg-grey-1 !px-4 !py-2.5 !text-text-m-12">
+              <span className="block truncate">{person.message}</span>
+            </Message>
           </article>
         ))}
       </div>
-      {calling && (
+      {callingIndex !== null && (
         <div
           className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 p-5"
           role="presentation"
-          onClick={() => setCalling(false)}
+          onClick={() => setCallingIndex(null)}
         >
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="call-confirm-title"
-            className="w-full max-w-[330px] rounded-2xl bg-white p-6 text-center"
+          <CallConfirmModal
+            onReject={() => setCallingIndex(null)}
+            onConfirm={() => {
+              const selectedIndex = callingIndex;
+              setCallingIndex(null);
+              navigate(
+                ROUTES.PROFILE.replace(':requestId', String(selectedIndex + 1)),
+              );
+            }}
             onClick={(event) => event.stopPropagation()}
-          >
-            <h2 id="call-confirm-title" className="text-title-b-20">
-              통화를 하셨나요?
-            </h2>
-            <div className="mt-6 flex gap-3">
-              <button
-                type="button"
-                onClick={() => setCalling(false)}
-                className="flex-1 rounded-[10px] bg-grey-1 py-3"
-              >
-                아니요
-              </button>
-              <button
-                type="button"
-                onClick={() => setCalling(false)}
-                className="flex-1 rounded-[10px] bg-primary-100 py-3 text-white"
-              >
-                네, 했어요
-              </button>
-            </div>
-          </section>
+          />
         </div>
       )}
     </main>

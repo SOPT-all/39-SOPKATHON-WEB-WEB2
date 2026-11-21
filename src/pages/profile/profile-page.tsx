@@ -25,7 +25,7 @@ const ProfilePage = () => {
             <p className="text-text-m-12 text-grey-3">나와의 거리 · 2km</p>
           </div>
         </div>
-        <p className="text-text-m-16 mt-3 rounded-[10px] bg-primary-10 px-5 py-4">
+        <p className="mt-3 rounded-[10px] bg-primary-10 px-5 py-4 text-title-m-16">
           멋진 사람.
           <br />
           멋있는 당신과 커피 한 잔. 즐기고 싶어요.
