@@ -71,7 +71,7 @@ const MatchingPage = () => {
 
   if (status !== 'ready' || (!hasNext && isAdvancing))
     return (
-      <main className="flex flex-1 flex-col">
+      <main className="flex flex-1 flex-col pt-2.5 sm:pt-0">
         <MatchingAppBar />
         <div className="m-auto text-center" role="status">
           {status === 'loading' || isAdvancing
@@ -92,13 +92,15 @@ const MatchingPage = () => {
       </main>
     );
   return (
-    <main className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto">
+    // 휴대폰에서는 로고 위에 다른 화면의 제목과 같은 높이만큼 여백을 줘요.
+    // PC의 화면 틀에서는 위쪽 54px 영역이 그 역할을 해서 따로 주지 않아요.
+    <main className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto pt-2.5 sm:pt-0">
       <MatchingAppBar />
       <h1 className="sr-only">매칭 상대</h1>
       {/* 로고는 위에, 안내와 버튼은 아래에 붙어 있어요. 카드는 그 사이 남는 공간의 가운데에 놓여요. */}
       <div className="flex flex-1 flex-col justify-center">
         <div
-          className="relative mt-2.75 mb-6.75 h-89.5 shrink-0"
+          className="relative mt-4.25 mb-6.75 h-89.5 shrink-0 sm:mt-2.75"
           aria-label="매칭 카드"
         >
           {[-1, ...profiles.map((_, index) => index), profiles.length].map(
