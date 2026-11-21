@@ -32,7 +32,7 @@ const NAVIGATION_ITEMS = [
 const NavigationBar = () => {
   return (
     <nav
-      className="sticky bottom-0 z-10 shrink-0 bg-white py-2.5 shadow-[0_-2px_3px] shadow-grey-shadow"
+      className="sticky bottom-[env(safe-area-inset-bottom,0px)] z-10 shrink-0 bg-white py-2.5 shadow-[0_-2px_3px] shadow-grey-shadow"
       aria-label="하단 내비게이션"
     >
       <ul className="mx-auto flex w-full max-w-[239px] items-center justify-between">
