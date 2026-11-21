@@ -4,10 +4,15 @@ import type { MatchingProfile } from '@/shared/types/matching-profile';
 
 interface MessageCompleteProps {
   profile: MatchingProfile;
+  hasMessage: boolean;
   onConfirm: () => void;
 }
 
-const MessageComplete = ({ profile, onConfirm }: MessageCompleteProps) => {
+const MessageComplete = ({
+  profile,
+  hasMessage,
+  onConfirm,
+}: MessageCompleteProps) => {
   return (
     <main className="flex flex-1 flex-col items-center pt-12.75 pb-4.5">
       <MessageSentIllustration />
@@ -18,7 +23,7 @@ const MessageComplete = ({ profile, onConfirm }: MessageCompleteProps) => {
       >
         상대방에게
         <br />
-        번호와 쪽지를 보냈어요!
+        {hasMessage ? '번호와 쪽지를 보냈어요!' : '번호를 보냈어요!'}
       </h1>
       <div className="mt-auto flex w-full flex-col gap-2.5 px-5 pt-7.25">
         <section
