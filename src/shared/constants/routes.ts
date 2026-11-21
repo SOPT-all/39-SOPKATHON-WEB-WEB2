@@ -9,4 +9,6 @@ export const ROUTES = {
   REQUEST: '/requests',
   PROFILE: '/requests/:requestId',
   PLACE: '/places',
+  OWNER: '/owner',
+  OWNER_APPLY: '/owner/apply',
 } as const;
