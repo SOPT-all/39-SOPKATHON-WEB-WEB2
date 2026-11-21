@@ -11,6 +11,14 @@ import { setUserId } from '@/shared/utils/user-id';
 
 const PHONE_NUMBER_LENGTH = 11;
 
+// 숫자만 있는 번호를 010-1234-5678 모양으로 바꿔요. 넣는 중간에도 자리에 맞춰 하이픈이 들어가요.
+const formatPhoneNumber = (digits: string) => {
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -21,7 +29,7 @@ const LoginPage = () => {
   const canSubmit = isValid && !isSubmitting;
 
   const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // 숫자만 남겨요. 하이픈을 넣어도 지워져요.
+    // 화면에는 하이픈을 넣어 보여 주지만, 값은 숫자만 남겨서 가지고 있어요.
     const digits = event.target.value.replace(/\D/g, '');
 
     setPhoneNumber(digits.slice(0, PHONE_NUMBER_LENGTH));
@@ -80,7 +88,7 @@ const LoginPage = () => {
               inputMode="numeric"
               autoComplete="tel"
               placeholder="전화번호를 입력해주세요."
-              value={phoneNumber}
+              value={formatPhoneNumber(phoneNumber)}
               onChange={handlePhoneNumberChange}
             />
             {errorMessage && (
