@@ -273,13 +273,11 @@ const OwnerPage = () => {
               휴대폰 카메라로 QR을 찍어 모바일 화면을 열어보세요.
             </p>
           </div>
-          <div className="size-28 rounded-xl bg-white p-1">
-            <img
-              src={ownerQr}
-              alt="휴대폰에서 오작교를 여는 QR 코드"
-              className="size-full object-contain"
-            />
-          </div>
+          <img
+            src={ownerQr}
+            alt="휴대폰에서 오작교를 여는 QR 코드"
+            className="size-28 object-contain"
+          />
         </section>
       </div>
     </main>
