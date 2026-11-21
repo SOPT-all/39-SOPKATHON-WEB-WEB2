@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+
 import OwnerHeader from '@/pages/owner/components/owner-header';
 import PhoneMockup from '@/pages/owner/components/phone-mockup';
 import PhonePreview from '@/pages/owner/components/phone-preview';
 import ownerQr from '@/shared/assets/images/img-owner-qr.png';
+import '@/pages/owner/owner-page.css';
 
 const DAJEONG_CAFE_IMAGE =
   'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png';
@@ -72,7 +75,7 @@ const OwnerPage = () => {
   }, []);
 
   return (
-    <main className="mx-auto min-h-dvh max-w-[1440px] overflow-hidden bg-white text-black md:[zoom:0.8]">
+    <main className="owner-page mx-auto min-h-dvh max-w-[1440px] overflow-hidden bg-white text-black md:[zoom:0.8]">
       <div className="bg-gradient-to-b from-primary-10 to-white">
         <OwnerHeader />
         <section className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 pt-8 pb-16 md:flex-row md:items-center md:justify-between md:px-10 md:pt-16 xl:px-0">
@@ -285,4 +288,3 @@ const OwnerPage = () => {
 };
 
 export default OwnerPage;
-import { useEffect } from 'react';

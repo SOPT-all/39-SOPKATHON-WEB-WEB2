@@ -1,0 +1,197 @@
+.owner-page [data-reveal] {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms ease;
+}
+
+.owner-page [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes owner-float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes owner-heart {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes owner-message-send {
+  0%,
+  66%,
+  100% {
+    transform: scale(1);
+    background-color: var(--color-grey-5);
+  }
+
+  72% {
+    transform: scale(0.97);
+    background-color: var(--color-grey-6);
+  }
+
+  78% {
+    transform: scale(1);
+    background-color: var(--color-grey-5);
+  }
+}
+
+@keyframes owner-call-tap {
+  0%,
+  100% {
+    background-color: var(--color-primary-100);
+    transform: scale(1);
+  }
+
+  12% {
+    background-color: var(--color-primary-50);
+    transform: scale(0.96);
+  }
+
+  22% {
+    background-color: var(--color-primary-100);
+    transform: scale(1);
+  }
+}
+
+@keyframes owner-list-scroll {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-52px);
+  }
+}
+
+@keyframes owner-profile-page {
+  0%,
+  17%,
+  40%,
+  100% {
+    transform: translateX(100%);
+  }
+
+  46%,
+  70% {
+    transform: translateX(0);
+  }
+
+  76% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes owner-request-screen {
+  0%,
+  40%,
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  46%,
+  70% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes owner-profile-tap {
+  0%,
+  28%,
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+
+  32%,
+  40% {
+    background-color: var(--color-primary-10);
+    transform: scale(0.98);
+  }
+}
+
+.owner-page .motion-float {
+  animation: owner-float 4s ease-in-out infinite;
+}
+
+.owner-page .motion-float-delayed {
+  animation: owner-float 4.6s 500ms ease-in-out infinite;
+}
+
+.owner-page .motion-heart {
+  animation: owner-heart 2.4s ease-in-out infinite;
+}
+
+.owner-page .owner-message-send {
+  animation: owner-message-send 3.5s ease-in-out infinite;
+}
+
+.owner-page .owner-request-card {
+  border-radius: 0.75rem;
+}
+
+.owner-page .owner-request-card:first-child {
+  animation: owner-profile-tap 10s ease-in-out infinite;
+}
+
+.owner-page .owner-request-scroll {
+  animation: owner-request-screen 10s ease-in-out infinite;
+}
+
+.owner-page .owner-call-button,
+.owner-page .owner-detail-call-button {
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.owner-page .owner-profile-detail {
+  animation: owner-profile-page 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.owner-page .owner-detail-call-button {
+  animation: owner-call-tap 10s 4.7s ease-in-out infinite;
+}
+
+.owner-page .owner-place-card {
+  border-radius: 0.75rem;
+}
+
+.owner-page .owner-place-scroll {
+  animation: owner-list-scroll 10s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .owner-page [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .owner-page .motion-float,
+  .owner-page .motion-float-delayed,
+  .owner-page .motion-heart,
+  .owner-page .owner-message-send,
+  .owner-page .owner-request-card,
+  .owner-page .owner-request-scroll,
+  .owner-page .owner-call-button,
+  .owner-page .owner-profile-detail,
+  .owner-page .owner-detail-call-button,
+  .owner-page .owner-place-scroll {
+    animation: none;
+  }
+
+  .owner-page .owner-profile-detail {
+    transform: translateX(100%);
+  }
+}
