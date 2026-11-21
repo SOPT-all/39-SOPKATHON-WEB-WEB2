@@ -16,13 +16,13 @@ const NAVIGATION_ITEMS = [
     DefaultIcon: IcHeartDefault,
   },
   {
-    label: '받은요청',
+    label: '받은쪽지',
     path: ROUTES.REQUEST,
     ActiveIcon: IcRequestActive,
     DefaultIcon: IcRequestDefault,
   },
   {
-    label: '근처장소',
+    label: '안심장소',
     path: ROUTES.PLACE,
     ActiveIcon: IcCompassActive,
     DefaultIcon: IcCompassDefault,
