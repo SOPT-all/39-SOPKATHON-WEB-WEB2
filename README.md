@@ -64,7 +64,7 @@
     </td>
   </tr>
   <tr align="center">
-    <td>👑 김종현</td>
+    <td>김종현</td>
     <td>이보성</td>
     <td>조현영</td>
   </tr>
