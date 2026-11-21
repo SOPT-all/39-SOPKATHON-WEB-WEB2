@@ -219,4 +219,8 @@ src
 
 ### After
 
-(사진 추가 예정)
+<p align="center">
+  <img src="./docs/images/after-1.jpg" width="32%" alt="웹토리 팀원들 사진 (after) 1" />
+  <img src="./docs/images/after-2.jpg" width="32%" alt="웹토리 팀원들 사진 (after) 2" />
+  <img src="./docs/images/after-3.jpg" width="32%" alt="웹토리 팀원들 사진 (after) 3" />
+</p>
