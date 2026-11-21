@@ -3,6 +3,7 @@ import { extendTailwindMerge } from 'tailwind-merge';
 
 // global.css의 타이포 토큰이에요. 토큰을 추가하면 여기에도 추가해요.
 const FONT_SIZES = [
+  'status-bar-time',
   'title-b-22',
   'title-m-22',
   'title-b-20',
