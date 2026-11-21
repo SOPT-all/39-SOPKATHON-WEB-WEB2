@@ -19,6 +19,7 @@ const MatchingPage = () => {
     'loading',
   );
   const [attempt, setAttempt] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     getMatches(controller.signal)
@@ -34,7 +35,6 @@ const MatchingPage = () => {
       });
     return () => controller.abort();
   }, [attempt]);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const currentIndex = activeIndex;
   const hasNext = activeIndex < profiles.length;
