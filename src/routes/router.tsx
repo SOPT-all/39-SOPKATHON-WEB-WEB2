@@ -20,13 +20,13 @@ export const router = createBrowserRouter([
     children: [
       { path: ROUTES.LOGIN, element: <LoginPage /> },
       { path: ROUTES.ONBOARDING, element: <OnboardingPage /> },
-      { path: ROUTES.MESSAGE, element: <MessagePage /> },
-      { path: ROUTES.PROFILE, element: <ProfilePage /> },
       {
         element: <TabLayout />,
         children: [
           { path: ROUTES.MATCHING, element: <MatchingPage /> },
+          { path: ROUTES.MESSAGE, element: <MessagePage /> },
           { path: ROUTES.REQUEST, element: <RequestPage /> },
+          { path: ROUTES.PROFILE, element: <ProfilePage /> },
           { path: ROUTES.PLACE, element: <PlacePage /> },
         ],
       },
