@@ -4,8 +4,127 @@
  */
 @import 'tailwindcss';
 
-/* 디자인이 나오면 색상 · 폰트 토큰을 여기에 추가해요. 예) --color-primary: #000000; */
+/*
+ * 디자인 토큰이에요. 이름은 Figma의 변수 이름을 따라요.
+ * 색상: bg-grey-1, text-primary-100, border-grey-3 처럼 써요.
+ * 타이포: text-title-sb-18 처럼 쓰면 크기 · 굵기 · 줄 높이 · 자간이 한 번에 들어가요.
+ */
 @theme {
+  --spacing-status-bar: 3.375rem;
+
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+    sans-serif;
+
+  /* B&W */
+  --color-white: #ffffff;
+  --color-black: #0b0b0b;
+  --color-black-80: rgb(11 11 11 / 0.8);
+  --color-error: #ff1e1e;
+
+  /* Grey */
+  --color-grey-1: #ececec;
+  --color-grey-2: #d1d1d1;
+  --color-grey-3: #adadad;
+  --color-grey-4: #878787;
+  --color-grey-5: #626262;
+  --color-grey-6: #404040;
+  --color-grey-7: #363636;
+  --color-grey-8: #2d2d2d;
+  --color-grey-9: #242424;
+  --color-grey-10: #1d1d1d;
+  --color-grey-shadow: rgb(174 174 174 / 0.25);
+
+  /* Primary */
+  --color-primary-100: #f8467b;
+  --color-primary-50: #f57098;
+  --color-primary-10: #ffeaf0;
+
+  /* StatusBar: Figma Pretendard Variable / SemiBold */
+  --text-status-bar-time: 0.975rem;
+  --text-status-bar-time--line-height: 1.2;
+  --text-status-bar-time--letter-spacing: 0;
+  --text-status-bar-time--font-weight: 600;
+
+  /* Title */
+  --text-title-b-22: 1.375rem;
+  --text-title-b-22--line-height: 1.5;
+  --text-title-b-22--letter-spacing: -0.02em;
+  --text-title-b-22--font-weight: 700;
+  --text-title-m-22: 1.375rem;
+  --text-title-m-22--line-height: 1.5;
+  --text-title-m-22--letter-spacing: -0.02em;
+  --text-title-m-22--font-weight: 500;
+  --text-title-b-20: 1.25rem;
+  --text-title-b-20--line-height: 1.5;
+  --text-title-b-20--letter-spacing: -0.02em;
+  --text-title-b-20--font-weight: 700;
+  --text-title-m-20: 1.25rem;
+  --text-title-m-20--line-height: 1.5;
+  --text-title-m-20--letter-spacing: -0.02em;
+  --text-title-m-20--font-weight: 500;
+  --text-title-sb-18: 1.125rem;
+  --text-title-sb-18--line-height: 1.5;
+  --text-title-sb-18--letter-spacing: -0.02em;
+  --text-title-sb-18--font-weight: 600;
+  --text-title-m-18: 1.125rem;
+  --text-title-m-18--line-height: 1.5;
+  --text-title-m-18--letter-spacing: -0.02em;
+  --text-title-m-18--font-weight: 500;
+  --text-title-sb-16: 1rem;
+  --text-title-sb-16--line-height: 1.5;
+  --text-title-sb-16--letter-spacing: -0.02em;
+  --text-title-sb-16--font-weight: 600;
+  --text-title-m-16: 1rem;
+  --text-title-m-16--line-height: 1.5;
+  --text-title-m-16--letter-spacing: -0.02em;
+  --text-title-m-16--font-weight: 500;
+
+  /* Text */
+  --text-text-sb-14: 0.875rem;
+  --text-text-sb-14--line-height: 1.5;
+  --text-text-sb-14--letter-spacing: -0.02em;
+  --text-text-sb-14--font-weight: 600;
+  --text-text-m-14: 0.875rem;
+  --text-text-m-14--line-height: 1.5;
+  --text-text-m-14--letter-spacing: -0.02em;
+  --text-text-m-14--font-weight: 500;
+  --text-text-sb-12: 0.75rem;
+  --text-text-sb-12--line-height: 1.5;
+  --text-text-sb-12--letter-spacing: -0.02em;
+  --text-text-sb-12--font-weight: 600;
+  --text-text-m-12: 0.75rem;
+  --text-text-m-12--line-height: 1.5;
+  --text-text-m-12--letter-spacing: -0.02em;
+  --text-text-m-12--font-weight: 500;
+
+  /* Label */
+  --text-label-sb-10: 0.625rem;
+  --text-label-sb-10--line-height: 1.5;
+  --text-label-sb-10--letter-spacing: -0.02em;
+  --text-label-sb-10--font-weight: 600;
+  --text-label-m-10: 0.625rem;
+  --text-label-m-10--line-height: 1.5;
+  --text-label-m-10--letter-spacing: -0.02em;
+  --text-label-m-10--font-weight: 500;
+}
+
+/* 휴대폰의 노치나 홈 막대에 내용이 가려지지 않게 기기가 알려 주는 만큼 여백을 줘요. */
+@utility safe-area {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+/* Figma의 gradient(#0B0B0B 0% → 100%)예요. 사진 위에 글자를 올릴 때 써요. */
+@utility bg-gradient-black {
+  background-image: linear-gradient(
+    to bottom,
+    rgb(11 11 11 / 0),
+    rgb(11 11 11 / 1)
+  );
 }
 
 @layer base {
@@ -26,5 +145,56 @@
   a {
     color: inherit;
     text-decoration: none;
+  }
+}
+
+@keyframes owner-float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes owner-heart {
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(44px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms ease;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.motion-float {
+  animation: owner-float 4s ease-in-out infinite;
+}
+
+.motion-float-delayed {
+  animation: owner-float 4.6s 500ms ease-in-out infinite;
+}
+
+.motion-heart {
+  animation: owner-heart 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .motion-float,
+  .motion-float-delayed,
+  .motion-heart {
+    animation: none;
   }
 }

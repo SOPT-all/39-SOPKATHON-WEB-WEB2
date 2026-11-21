@@ -2,3 +2,4 @@ dist
 pnpm-lock.yaml
 *.md
 .github
+src/shared/assets/lotties
