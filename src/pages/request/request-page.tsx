@@ -8,7 +8,7 @@ import { ROUTES } from '@/shared/constants/routes';
 import type { ReceivedRequest } from '@/shared/types/received-request';
 
 import connectReceivedRequest from './api/connect-received-request';
-import getReceivedRequests from './api/get-received-requests';
+import getReceivedRequests from '@/shared/api/get-received-requests';
 
 const REFRESH_INTERVAL_MS = 3_000;
 
