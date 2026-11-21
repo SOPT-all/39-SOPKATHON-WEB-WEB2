@@ -98,7 +98,7 @@ const BirthYearSheet = ({
   };
 
   return (
-    <div className="fixed inset-0 z-20 mx-auto flex w-full max-w-107.5 flex-col justify-end">
+    <div className="fixed inset-0 z-20 mx-auto flex w-full max-w-107.5 flex-col justify-end pr-[env(safe-area-inset-right,0px)] pl-[env(safe-area-inset-left,0px)]">
       <button
         type="button"
         aria-label="닫기"
@@ -109,7 +109,7 @@ const BirthYearSheet = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="birth-year-sheet-title"
-        className="relative flex flex-col gap-4 rounded-t-[20px] bg-white p-5"
+        className="relative flex flex-col gap-4 rounded-t-[20px] bg-white p-5 pb-[max(20px,env(safe-area-inset-bottom,0px))]"
       >
         <header className="flex items-center justify-between">
           <h2 id="birth-year-sheet-title" className="text-title-sb-18">
