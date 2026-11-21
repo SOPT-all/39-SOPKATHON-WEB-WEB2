@@ -27,11 +27,12 @@ const MatchingPage = () => {
   };
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col">
-      <MatchingAppBar />
-      <h1 className="sr-only">매칭 상대</h1>
-      <div className="min-h-0 flex-1 [scrollbar-width:none] overflow-x-hidden overflow-y-auto">
-        <div className="relative mt-2.75 h-99.5" aria-label="매칭 카드">
+    <main className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto">
+      {/* 로고부터 버튼까지 한 묶음이에요. 화면이 길면 남는 여백이 묶음의 위아래로 똑같이 나뉘어요. */}
+      <div className="my-auto flex shrink-0 flex-col">
+        <MatchingAppBar />
+        <h1 className="sr-only">매칭 상대</h1>
+        <div className="relative mt-2.75 h-89.5" aria-label="매칭 카드">
           {[
             -1,
             ...MATCHING_PREVIEW_PROFILES.map((_, index) => index),
@@ -83,20 +84,20 @@ const MatchingPage = () => {
             );
           })}
         </div>
-      </div>
-      <div className="flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
-        <p className="text-center text-text-m-14 text-grey-4">
-          당신과 가까이 있는 데이트 상대에요!
-        </p>
-        <div className="px-4.5">
-          <ServiceEntryButton
-            className="px-5"
-            showArrow
-            status={!hasNext || isAdvancing ? 'disabled' : 'active'}
-            onClick={handleNext}
-          >
-            다음 사람 보기
-          </ServiceEntryButton>
+        <div className="relative mt-6.75 flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
+          <p className="text-center text-text-m-14 text-grey-4">
+            당신과 가까이 있는 데이트 상대에요!
+          </p>
+          <div className="px-4.5">
+            <ServiceEntryButton
+              className="px-5"
+              showArrow
+              status={!hasNext || isAdvancing ? 'disabled' : 'active'}
+              onClick={handleNext}
+            >
+              다음 사람 보기
+            </ServiceEntryButton>
+          </div>
         </div>
       </div>
     </main>
