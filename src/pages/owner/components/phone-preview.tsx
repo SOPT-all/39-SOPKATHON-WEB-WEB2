@@ -137,7 +137,11 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
               통화한 분과 근처 장소에서 만나보세요!
             </p>
             <div className="absolute top-[175px] left-5 w-[335px]">
-              {['핵밥 건대본점', '제스티 살룬 새우버거 건대 본점', '우리집'].map((name, index) => (
+              {[
+                '핵밥 건대본점',
+                '제스티 살룬 새우버거 건대 본점',
+                '우리집',
+              ].map((name, index) => (
                 <div key={name} className="border-b border-grey-1 py-4">
                   <div className="flex gap-2">
                     <div className="size-[75px] rounded-[10px] bg-primary-10" />
@@ -149,7 +153,13 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
                         </span>
                       </div>
                       <span className="text-sm text-grey-5">
-                        {['광진구 능동로 127', '광진구 능동로 26', '광진구 능동로 98'][index]}
+                        {
+                          [
+                            '광진구 능동로 127',
+                            '광진구 능동로 26',
+                            '광진구 능동로 98',
+                          ][index]
+                        }
                       </span>
                       <span className="mt-1 text-xs text-primary-100">
                         지도보기 ›
@@ -157,7 +167,16 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
                     </div>
                   </div>
                   <p className="mt-2 rounded-[10px] bg-grey-1 px-4 py-2.5 text-xs">
-                    <><b>제휴 혜택</b> {['시니어 커플 5% 할인', '시니어 커플 사이다 무료', '시니어 커플 10% 할인'][index]}</>
+                    <>
+                      <b>제휴 혜택</b>{' '}
+                      {
+                        [
+                          '시니어 커플 5% 할인',
+                          '시니어 커플 사이다 무료',
+                          '시니어 커플 10% 할인',
+                        ][index]
+                      }
+                    </>
                   </p>
                 </div>
               ))}
@@ -167,13 +186,39 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
 
         <div className="absolute inset-x-0 bottom-0 flex h-[60px] items-center justify-between bg-white px-[68px] shadow-[0_-2px_3px_var(--color-grey-shadow)]">
           {[
-            { label: '매칭', active: type === 'matching' || type === 'message', Active: IcHeartActive, Default: IcHeartDefault },
-            { label: '받은쪽지', active: type === 'requests', Active: IcRequestActive, Default: IcRequestDefault },
-            { label: '안심장소', active: type === 'places', Active: IcCompassActive, Default: IcCompassDefault },
+            {
+              label: '매칭',
+              active: type === 'matching' || type === 'message',
+              Active: IcHeartActive,
+              Default: IcHeartDefault,
+            },
+            {
+              label: '받은쪽지',
+              active: type === 'requests',
+              Active: IcRequestActive,
+              Default: IcRequestDefault,
+            },
+            {
+              label: '안심장소',
+              active: type === 'places',
+              Active: IcCompassActive,
+              Default: IcCompassDefault,
+            },
           ].map(({ label, active, Active, Default }) => (
-            <div key={label} className="flex size-10 flex-col items-center text-grey-6">
-              {active ? <Active className="size-6" /> : <Default className="size-6" />}
-              <span className={`whitespace-nowrap text-[10px] ${active ? 'font-semibold' : 'font-medium'}`}>{label}</span>
+            <div
+              key={label}
+              className="flex size-10 flex-col items-center text-grey-6"
+            >
+              {active ? (
+                <Active className="size-6" />
+              ) : (
+                <Default className="size-6" />
+              )}
+              <span
+                className={`text-[10px] whitespace-nowrap ${active ? 'font-semibold' : 'font-medium'}`}
+              >
+                {label}
+              </span>
             </div>
           ))}
         </div>

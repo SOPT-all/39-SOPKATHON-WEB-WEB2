@@ -130,7 +130,10 @@ const OwnerPage = () => {
           </div>
         </section>
 
-        <section data-reveal className="grid gap-5 rounded-[20px] bg-primary-10 px-6 py-8 md:grid-cols-2 md:items-center md:px-10 md:py-20">
+        <section
+          data-reveal
+          className="grid gap-5 rounded-[20px] bg-primary-10 px-6 py-8 md:grid-cols-2 md:items-center md:px-10 md:py-20"
+        >
           <div>
             <span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold">
               오작교가 시작된 이유
@@ -194,7 +197,10 @@ const OwnerPage = () => {
           </div>
         </section>
 
-        <section data-reveal className="grid gap-8 rounded-[20px] bg-grey-1 px-5 py-7 md:grid-cols-2 md:items-center md:px-10 md:py-14">
+        <section
+          data-reveal
+          className="grid gap-8 rounded-[20px] bg-grey-1 px-5 py-7 md:grid-cols-2 md:items-center md:px-10 md:py-14"
+        >
           <div>
             <span className="rounded-full bg-white px-3 py-1.5 text-sm font-semibold">
               데이트 장소
@@ -246,7 +252,10 @@ const OwnerPage = () => {
           </div>
         </section>
 
-        <section data-reveal className="flex flex-col justify-between gap-8 rounded-[20px] bg-black px-6 py-8 text-white md:flex-row md:items-center md:px-10 md:py-14">
+        <section
+          data-reveal
+          className="flex flex-col justify-between gap-8 rounded-[20px] bg-black px-6 py-8 text-white md:flex-row md:items-center md:px-10 md:py-14"
+        >
           <div>
             <h2 className="text-2xl font-bold md:text-[44px]">
               휴대폰으로 오작교 시작하기
@@ -266,4 +275,3 @@ const OwnerPage = () => {
 
 export default OwnerPage;
 import { useEffect } from 'react';
-

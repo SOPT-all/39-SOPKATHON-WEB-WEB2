@@ -8,7 +8,11 @@ const OwnerHeader = () => {
   return (
     <header className="flex h-[70px] w-full items-center justify-between px-5 md:h-[90px] md:px-10 xl:px-[120px]">
       <NavLink to={ROUTES.OWNER} aria-label="오작교 서비스 소개">
-        <img src={logo} alt="오작교" className="h-[30px] w-[110px] object-contain" />
+        <img
+          src={logo}
+          alt="오작교"
+          className="h-[30px] w-[110px] object-contain"
+        />
       </NavLink>
       <nav
         className="flex items-center gap-2.5"
