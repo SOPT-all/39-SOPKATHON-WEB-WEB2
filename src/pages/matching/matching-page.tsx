@@ -4,6 +4,7 @@ import { generatePath, useNavigate } from 'react-router';
 import MatchingCard from '@/pages/matching/components/matching-card';
 import { getMatches } from '@/pages/matching/api/get-matches';
 import { skipMatch } from '@/pages/matching/api/skip-match';
+import matchingEmptyImage from '@/shared/assets/images/img-matching-empty.svg';
 import MatchingAppBar from '@/shared/components/matching-app-bar';
 import ServiceEntryButton from '@/shared/components/service-entry-button';
 import type { MatchingProfile } from '@/shared/types/matching-profile';
@@ -68,16 +69,14 @@ const MatchingPage = () => {
     setIsAdvancing(false);
   };
 
-  if (status !== 'ready' || !profiles[activeIndex])
+  if (status !== 'ready' || (!hasNext && isAdvancing))
     return (
       <main className="flex flex-1 flex-col">
         <MatchingAppBar />
         <div className="m-auto text-center" role="status">
           {status === 'loading' || isAdvancing
             ? '상대를 찾고 있어요.'
-            : status === 'error'
-              ? '매칭 상대를 불러오지 못했어요.'
-              : '지금 보여드릴 상대가 없어요.'}
+            : '매칭 상대를 불러오지 못했어요.'}
           {status === 'error' && (
             <button
               type="button"
@@ -132,10 +131,23 @@ const MatchingPage = () => {
                       }
                     />
                   )}
+                  {!hasNext && offset === 0 && (
+                    <div className="flex size-full flex-col items-center justify-center gap-5 bg-grey-1">
+                      <img
+                        src={matchingEmptyImage}
+                        alt=""
+                        width="195"
+                        height="157"
+                      />
+                      <p className="text-title-b-20 text-grey-4">
+                        까치가 사랑을 물어오는 중..
+                      </p>
+                    </div>
+                  )}
                   <div
                     className={cn(
                       'pointer-events-none absolute inset-0 bg-primary-10 transition-opacity duration-250 motion-reduce:duration-1',
-                      profile && offset === 0 ? 'opacity-0' : 'opacity-100',
+                      offset === 0 ? 'opacity-0' : 'opacity-100',
                     )}
                   />
                 </div>
@@ -150,8 +162,10 @@ const MatchingPage = () => {
             넘기지 못했어요. 다시 시도해 주세요.
           </p>
         )}
-        <p className="text-center text-text-m-14 text-grey-4">
-          당신과 가까이 있는 데이트 상대에요!
+        <p role="status" className="text-center text-text-m-14 text-grey-4">
+          {hasNext
+            ? '당신과 가까이 있는 데이트 상대에요!'
+            : '더이상 가까이 있는 데이트 상대가 없어요.'}
         </p>
         <div className="px-4.5">
           <ServiceEntryButton
