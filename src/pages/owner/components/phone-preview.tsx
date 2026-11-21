@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import IcArrowRight from '@/shared/assets/icons/ic-arrow-right.svg?react';
 import IcCall from '@/shared/assets/icons/ic-call.svg?react';
 import IcCompassActive from '@/shared/assets/icons/ic-compass-active.svg?react';
@@ -8,8 +10,25 @@ import IcRequestActive from '@/shared/assets/icons/ic-request-active.svg?react';
 import IcRequestDefault from '@/shared/assets/icons/ic-request-default.svg?react';
 import profileWoman1 from '@/shared/assets/images/img-owner-profile-woman-1.png';
 import profileWoman2 from '@/shared/assets/images/img-owner-profile-woman-2.png';
+import profileWoman3 from '@/shared/assets/images/img-matching-woman.png';
 import logo from '@/shared/assets/images/logo.png';
 import matchingImage from '@/shared/assets/images/matching_image.png';
+
+const PLACE_IMAGES = [
+  {
+    name: '핵밥 건대본점',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png',
+  },
+  {
+    name: '제스티 살룬 새우버거 건대 본점',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_05.png',
+  },
+  {
+    name: '우리집',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/tea_01.png',
+  },
+] as const;
+const DEMO_MESSAGE = '같이 산책하실래요?';
 
 type PhonePreviewType = 'matching' | 'message' | 'requests' | 'places';
 
@@ -19,7 +38,41 @@ interface PhonePreviewProps {
 }
 
 const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
-  const profiles = [profileWoman1, profileWoman2, profileWoman1];
+  const profiles = [profileWoman1, profileWoman2, profileWoman3];
+  const [typedCount, setTypedCount] = useState(() =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? DEMO_MESSAGE.length
+      : 0,
+  );
+
+  useEffect(() => {
+    if (type !== 'message') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let count = 0;
+    const typeNextCharacter = () => {
+      count += 1;
+      setTypedCount(count);
+
+      if (count === DEMO_MESSAGE.length) {
+        timeoutId = setTimeout(() => {
+          count = 0;
+          setTypedCount(0);
+          timeoutId = setTimeout(typeNextCharacter, 350);
+        }, 1300);
+        return;
+      }
+
+      timeoutId = setTimeout(typeNextCharacter, 110);
+    };
+
+    timeoutId = setTimeout(typeNextCharacter, 700);
+    return () => clearTimeout(timeoutId);
+  }, [type]);
 
   return (
     <div
@@ -65,10 +118,12 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
               <br /> 짧은 쪽지를 작성해주세요
             </h3>
             <div className="absolute top-[160px] left-[20px] flex h-[149px] w-[335px] flex-col justify-between rounded-[10px] border border-grey-4 p-5 text-base font-medium text-grey-4">
-              <span>쪽지 내용을 작성해주세요</span>
-              <span className="text-right">(0/50)</span>
+              <span className="text-grey-10">
+                {DEMO_MESSAGE.slice(0, typedCount)}
+              </span>
+              <span className="text-right">({typedCount}/50)</span>
             </div>
-            <button className="absolute top-[528px] left-[20px] w-[335px] rounded-[10px] bg-grey-5 py-4 text-lg font-semibold text-white">
+            <button className="owner-message-send absolute top-[528px] left-[20px] w-[335px] rounded-[10px] bg-grey-5 py-4 text-lg font-semibold text-white">
               쪽지 보내기
             </button>
           </>
@@ -90,37 +145,63 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
                 이어진 사랑
               </span>
             </div>
-            <div className="absolute top-[180px] left-5 w-[335px]">
-              {profiles.map((profile, index) => (
-                <div
-                  key={index}
-                  className="flex gap-2 border-b border-grey-1 py-3"
-                >
-                  <img
-                    src={profile}
-                    alt="가상의 시니어 여성 프로필"
-                    className="size-[78px] rounded-[10px] object-cover"
-                  />
-                  <div className="flex flex-1 flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <b className="text-lg">
-                          {['이영희', '박정숙', '최미자'][index]}
-                        </b>{' '}
-                        <span className="text-xs text-grey-5">
-                          {[67, 70, 65][index]}
-                        </span>
+            <div className="absolute top-[180px] left-5 h-[410px] w-[335px] overflow-hidden">
+              <div className="owner-request-scroll">
+                {profiles.map((profile, index) => (
+                  <div
+                    key={index}
+                    className="owner-request-card flex gap-2 border-b border-grey-1 py-3"
+                  >
+                    <img
+                      src={profile}
+                      alt="가상의 시니어 여성 프로필"
+                      className="size-[78px] rounded-[10px] object-cover"
+                    />
+                    <div className="flex flex-1 flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <b className="text-lg">
+                            {['이영희', '박정숙', '최미자'][index]}
+                          </b>{' '}
+                          <span className="text-xs text-grey-5">
+                            {[67, 70, 65][index]}
+                          </span>
+                        </div>
+                        <button className="owner-call-button flex items-center gap-1 rounded-[10px] bg-primary-100 px-3 py-2 text-sm text-white">
+                          전화 걸기 <IcCall className="size-4" />
+                        </button>
                       </div>
-                      <button className="flex items-center gap-1 rounded-[10px] bg-primary-100 px-3 py-2 text-sm text-white">
-                        전화 걸기 <IcCall className="size-4" />
-                      </button>
+                      <p className="rounded-[10px] bg-grey-1 p-2 text-center text-xs">
+                        “같이 산책하고 싶어요.”
+                      </p>
                     </div>
-                    <p className="rounded-[10px] bg-grey-1 p-2 text-center text-xs">
-                      “같이 산책하고 싶어요.”
-                    </p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+            <div className="owner-profile-detail absolute inset-x-0 top-[54px] bottom-[60px] z-10 flex flex-col bg-white px-5 pt-3">
+              <div className="mb-5 flex items-center gap-3">
+                <span className="text-2xl text-grey-6">‹</span>
+                <b className="text-lg">상세 프로필</b>
+              </div>
+              <img
+                src={profileWoman1}
+                alt="이영희 프로필"
+                className="h-[260px] w-full rounded-2xl object-cover"
+              />
+              <div className="mt-5 flex items-end justify-between">
+                <b className="text-2xl">이영희</b>
+                <span className="text-base text-grey-5">67세</span>
+              </div>
+              <p className="mt-1 text-sm text-grey-5">나와의 거리 2.0KM</p>
+              <p className="mt-5 text-base leading-6 text-grey-6">
+                산책과 따뜻한 차를 좋아해요.
+              </p>
+              <div className="mt-auto pb-4">
+                <button className="owner-detail-call-button flex w-full items-center justify-center gap-2 rounded-[10px] bg-primary-100 py-3 text-base font-semibold text-white">
+                  전화 걸기 <IcCall className="size-4" />
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -136,50 +217,56 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
             <p className="absolute top-[109px] left-5 w-[335px] rounded-[10px] bg-grey-1 py-3 text-center text-base font-medium">
               통화한 분과 근처 장소에서 만나보세요!
             </p>
-            <div className="absolute top-[175px] left-5 w-[335px]">
-              {[
-                '핵밥 건대본점',
-                '제스티 살룬 새우버거 건대 본점',
-                '우리집',
-              ].map((name, index) => (
-                <div key={name} className="border-b border-grey-1 py-4">
-                  <div className="flex gap-2">
-                    <div className="size-[75px] rounded-[10px] bg-primary-10" />
-                    <div className="flex flex-1 flex-col">
-                      <div className="flex justify-between">
-                        <b className="text-lg">{name}</b>
-                        <span className="text-xs text-grey-3">
-                          {index === 2 ? '2.0KM' : '1.0KM'}
+            <div className="absolute top-[175px] left-5 h-[422px] w-[335px] overflow-hidden">
+              <div className="owner-place-scroll">
+                {PLACE_IMAGES.map(({ name, src }, index) => (
+                  <div
+                    key={name}
+                    className="owner-place-card border-b border-grey-1 py-4"
+                  >
+                    <div className="flex gap-2">
+                      <img
+                        src={src}
+                        alt={`${name} 사진`}
+                        className="size-[75px] shrink-0 rounded-[10px] object-cover"
+                        loading="lazy"
+                      />
+                      <div className="flex flex-1 flex-col">
+                        <div className="flex justify-between">
+                          <b className="text-lg">{name}</b>
+                          <span className="text-xs text-grey-3">
+                            {index === 2 ? '2.0KM' : '1.0KM'}
+                          </span>
+                        </div>
+                        <span className="text-sm text-grey-5">
+                          {
+                            [
+                              '광진구 능동로 127',
+                              '광진구 능동로 26',
+                              '광진구 능동로 98',
+                            ][index]
+                          }
+                        </span>
+                        <span className="mt-1 text-xs text-primary-100">
+                          지도보기 ›
                         </span>
                       </div>
-                      <span className="text-sm text-grey-5">
+                    </div>
+                    <p className="mt-2 rounded-[10px] bg-grey-1 px-4 py-2.5 text-xs">
+                      <>
+                        <b>제휴 혜택</b>{' '}
                         {
                           [
-                            '광진구 능동로 127',
-                            '광진구 능동로 26',
-                            '광진구 능동로 98',
+                            '시니어 커플 5% 할인',
+                            '시니어 커플 사이다 무료',
+                            '시니어 커플 10% 할인',
                           ][index]
                         }
-                      </span>
-                      <span className="mt-1 text-xs text-primary-100">
-                        지도보기 ›
-                      </span>
-                    </div>
+                      </>
+                    </p>
                   </div>
-                  <p className="mt-2 rounded-[10px] bg-grey-1 px-4 py-2.5 text-xs">
-                    <>
-                      <b>제휴 혜택</b>{' '}
-                      {
-                        [
-                          '시니어 커플 5% 할인',
-                          '시니어 커플 사이다 무료',
-                          '시니어 커플 10% 할인',
-                        ][index]
-                      }
-                    </>
-                  </p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </>
         )}
