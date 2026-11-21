@@ -44,13 +44,11 @@ const OnboardingPage = () => {
   };
 
   return (
-    <main className="flex flex-1 flex-col pt-2.75 pb-5">
+    <main className="flex min-h-0 flex-1 flex-col">
       <h1 className="sr-only">내 정보 등록</h1>
-      <form
-        className="flex flex-1 flex-col justify-between gap-5 px-5"
-        onSubmit={handleSubmit}
-      >
-        <div className="flex flex-col gap-10">
+      <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
+        {/* 버튼은 화면 아래에 고정이고, 그 위의 내용만 스크롤돼요. */}
+        <div className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col gap-10 overflow-y-auto px-5 pt-2.75">
           <PhotoPicker photo={photo} onChange={setPhoto} />
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -89,12 +87,14 @@ const OnboardingPage = () => {
             </div>
           </div>
         </div>
-        <ServiceEntryButton
-          type="submit"
-          status={isValid ? 'active' : 'disabled'}
-        >
-          시작하기
-        </ServiceEntryButton>
+        <div className="shrink-0 px-5 pt-2 pb-5">
+          <ServiceEntryButton
+            type="submit"
+            status={isValid ? 'active' : 'disabled'}
+          >
+            시작하기
+          </ServiceEntryButton>
+        </div>
       </form>
       {isSheetOpen && (
         <BirthYearSheet
