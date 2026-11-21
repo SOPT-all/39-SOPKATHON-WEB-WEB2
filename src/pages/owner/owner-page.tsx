@@ -1,6 +1,7 @@
 import OwnerHeader from '@/pages/owner/components/owner-header';
 import PhoneMockup from '@/pages/owner/components/phone-mockup';
 import PhonePreview from '@/pages/owner/components/phone-preview';
+import ownerQr from '@/shared/assets/images/img-owner-qr.png';
 
 const DAJEONG_CAFE_IMAGE =
   'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png';
@@ -272,8 +273,12 @@ const OwnerPage = () => {
               휴대폰 카메라로 QR을 찍어 모바일 화면을 열어보세요.
             </p>
           </div>
-          <div className="flex size-28 items-center justify-center rounded-xl bg-grey-1 text-xl font-bold text-grey-5">
-            QR
+          <div className="size-28 rounded-xl bg-white p-1">
+            <img
+              src={ownerQr}
+              alt="휴대폰에서 오작교를 여는 QR 코드"
+              className="size-full object-contain"
+            />
           </div>
         </section>
       </div>
