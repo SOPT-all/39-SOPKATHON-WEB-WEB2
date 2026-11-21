@@ -138,12 +138,13 @@ const BirthYearSheet = ({
               const isSelected = year === selectedYear;
 
               return (
-                <li key={year} className="shrink-0 snap-center">
+                <li key={year} className="w-full shrink-0 snap-center">
                   <button
                     type="button"
                     aria-pressed={isSelected}
                     className={cn(
-                      'h-10.75 w-full text-center transition-[scale,color] duration-150 ease-out',
+                      // 아이폰에서는 버튼의 글자 정렬(text-center)이 먹지 않아서 flex로 가운데에 놓아요.
+                      'flex h-10.75 w-full items-center justify-center transition-[scale,color] duration-150 ease-out',
                       isSelected
                         ? 'scale-115 text-title-sb-18 text-black'
                         : 'text-title-m-18 text-grey-2',
