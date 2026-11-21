@@ -11,6 +11,21 @@ import profileWoman2 from '@/shared/assets/images/img-owner-profile-woman-2.png'
 import logo from '@/shared/assets/images/logo.png';
 import matchingImage from '@/shared/assets/images/matching_image.png';
 
+const PLACE_IMAGES = [
+  {
+    name: '핵밥 건대본점',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png',
+  },
+  {
+    name: '제스티 살룬 새우버거 건대 본점',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_05.png',
+  },
+  {
+    name: '우리집',
+    src: 'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/tea_01.png',
+  },
+] as const;
+
 type PhonePreviewType = 'matching' | 'message' | 'requests' | 'places';
 
 interface PhonePreviewProps {
@@ -137,14 +152,15 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
               통화한 분과 근처 장소에서 만나보세요!
             </p>
             <div className="absolute top-[175px] left-5 w-[335px]">
-              {[
-                '핵밥 건대본점',
-                '제스티 살룬 새우버거 건대 본점',
-                '우리집',
-              ].map((name, index) => (
+              {PLACE_IMAGES.map(({ name, src }, index) => (
                 <div key={name} className="border-b border-grey-1 py-4">
                   <div className="flex gap-2">
-                    <div className="size-[75px] rounded-[10px] bg-primary-10" />
+                    <img
+                      src={src}
+                      alt={`${name} 사진`}
+                      className="size-[75px] shrink-0 rounded-[10px] object-cover"
+                      loading="lazy"
+                    />
                     <div className="flex flex-1 flex-col">
                       <div className="flex justify-between">
                         <b className="text-lg">{name}</b>

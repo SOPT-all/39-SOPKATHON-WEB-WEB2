@@ -2,6 +2,9 @@ import OwnerHeader from '@/pages/owner/components/owner-header';
 import PhoneMockup from '@/pages/owner/components/phone-mockup';
 import PhonePreview from '@/pages/owner/components/phone-preview';
 
+const DAJEONG_CAFE_IMAGE =
+  'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png';
+
 const STEPS = [
   {
     badge: '01 · 마음 전하기',
@@ -216,7 +219,12 @@ const OwnerPage = () => {
           </div>
           <div className="overflow-hidden rounded-2xl bg-white">
             <div className="flex gap-4 p-5">
-              <div className="h-[86px] w-[104px] rounded-lg bg-grey-2" />
+              <img
+                src={DAJEONG_CAFE_IMAGE}
+                alt="다정카페 내부"
+                className="h-[86px] w-[104px] shrink-0 rounded-lg object-cover"
+                loading="lazy"
+              />
               <div>
                 <h3 className="text-[22px] font-bold">다정카페</h3>
                 <p className="text-grey-5">동대문구 제기로 12 · 0.4km</p>
