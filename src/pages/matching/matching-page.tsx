@@ -1,19 +1,38 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 
 import MatchingCard from '@/pages/matching/components/matching-card';
+import { getMatches } from '@/pages/matching/api/get-matches';
 import MatchingAppBar from '@/shared/components/matching-app-bar';
 import ServiceEntryButton from '@/shared/components/service-entry-button';
-import { MATCHING_PREVIEW_PROFILES } from '@/shared/constants/matching-preview';
+import type { MatchingProfile } from '@/shared/types/matching-profile';
 import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';
 
 const MatchingPage = () => {
   const navigate = useNavigate();
+  const [profiles, setProfiles] = useState<MatchingProfile[]>([]);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
+    'loading',
+  );
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    getMatches(controller.signal)
+      .then((result) => {
+        if (controller.signal.aborted) return;
+        setProfiles(result.profiles);
+        setStatus('ready');
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setStatus('error');
+      });
+    return () => controller.abort();
+  }, [attempt]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const currentIndex = activeIndex + (isAdvancing ? 1 : 0);
-  const hasNext = activeIndex < MATCHING_PREVIEW_PROFILES.length - 1;
+  const hasNext = activeIndex < profiles.length;
 
   const handleNext = () => {
     if (!hasNext || isAdvancing) return;
@@ -26,6 +45,30 @@ const MatchingPage = () => {
     setIsAdvancing(false);
   };
 
+  if (status !== 'ready' || !profiles[activeIndex])
+    return (
+      <main className="flex flex-1 flex-col">
+        <MatchingAppBar />
+        <div className="m-auto text-center" role="status">
+          {status === 'loading'
+            ? '상대를 찾고 있어요.'
+            : status === 'error'
+              ? '매칭 상대를 불러오지 못했어요.'
+              : '지금 보여드릴 상대가 없어요.'}
+          {status === 'error' && (
+            <button
+              type="button"
+              onClick={() => {
+                setStatus('loading');
+                setAttempt((value) => value + 1);
+              }}
+            >
+              다시 시도
+            </button>
+          )}
+        </div>
+      </main>
+    );
   return (
     <main className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto">
       <MatchingAppBar />
@@ -36,56 +79,54 @@ const MatchingPage = () => {
           className="relative mt-2.75 mb-6.75 h-89.5 shrink-0"
           aria-label="매칭 카드"
         >
-          {[
-            -1,
-            ...MATCHING_PREVIEW_PROFILES.map((_, index) => index),
-            MATCHING_PREVIEW_PROFILES.length,
-          ].map((index) => {
-            const offset = index - currentIndex;
-            const profile = MATCHING_PREVIEW_PROFILES[index];
-            return (
-              <div
-                key={index}
-                inert={offset !== 0 || isAdvancing}
-                aria-hidden={offset !== 0}
-                className={cn(
-                  'absolute top-0 left-[calc(50%-1.5px)] h-89.5 w-77.5 max-w-[calc(100%-64px)] -translate-x-1/2 overflow-hidden rounded-[10px] transition-transform duration-250 ease-out motion-reduce:duration-1',
-                  offset === 0 && 'z-10',
-                )}
-                style={{
-                  transform: `translateX(calc(${offset * 100}% + ${offset * 16}px)) translateY(${offset === 0 ? 0 : 40}px)`,
-                }}
-                onTransitionEnd={(event) => {
-                  if (
-                    event.target === event.currentTarget &&
-                    event.propertyName === 'transform' &&
-                    index === activeIndex
-                  )
-                    handleTransitionEnd();
-                }}
-              >
-                {profile && (
-                  <MatchingCard
-                    profile={profile}
-                    onMessage={() =>
-                      navigate(
-                        generatePath(ROUTES.MESSAGE, {
-                          targetId: String(profile.id),
-                        }),
-                        { state: { profile } },
-                      )
-                    }
-                  />
-                )}
+          {[-1, ...profiles.map((_, index) => index), profiles.length].map(
+            (index) => {
+              const offset = index - currentIndex;
+              const profile = profiles[index];
+              return (
                 <div
+                  key={index}
+                  inert={offset !== 0 || isAdvancing}
+                  aria-hidden={offset !== 0}
                   className={cn(
-                    'pointer-events-none absolute inset-0 bg-primary-10 transition-opacity duration-250 motion-reduce:duration-1',
-                    profile && offset === 0 ? 'opacity-0' : 'opacity-100',
+                    'absolute top-0 left-[calc(50%-1.5px)] h-89.5 w-77.5 max-w-[calc(100%-64px)] -translate-x-1/2 overflow-hidden rounded-[10px] transition-transform duration-250 ease-out motion-reduce:duration-1',
+                    offset === 0 && 'z-10',
                   )}
-                />
-              </div>
-            );
-          })}
+                  style={{
+                    transform: `translateX(calc(${offset * 100}% + ${offset * 16}px)) translateY(${offset === 0 ? 0 : 40}px)`,
+                  }}
+                  onTransitionEnd={(event) => {
+                    if (
+                      event.target === event.currentTarget &&
+                      event.propertyName === 'transform' &&
+                      index === activeIndex
+                    )
+                      handleTransitionEnd();
+                  }}
+                >
+                  {profile && (
+                    <MatchingCard
+                      profile={profile}
+                      onMessage={() =>
+                        navigate(
+                          generatePath(ROUTES.MESSAGE, {
+                            targetId: String(profile.id),
+                          }),
+                          { state: { profile } },
+                        )
+                      }
+                    />
+                  )}
+                  <div
+                    className={cn(
+                      'pointer-events-none absolute inset-0 bg-primary-10 transition-opacity duration-250 motion-reduce:duration-1',
+                      profile && offset === 0 ? 'opacity-0' : 'opacity-100',
+                    )}
+                  />
+                </div>
+              );
+            },
+          )}
         </div>
       </div>
       <div className="relative flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
