@@ -1,6 +1,13 @@
+import { useEffect } from 'react';
+
 import OwnerHeader from '@/pages/owner/components/owner-header';
 import PhoneMockup from '@/pages/owner/components/phone-mockup';
 import PhonePreview from '@/pages/owner/components/phone-preview';
+import ownerQr from '@/shared/assets/images/img-owner-qr.png';
+import '@/pages/owner/owner-page.css';
+
+const DAJEONG_CAFE_IMAGE =
+  'https://spokerthon-39.s3.ap-northeast-2.amazonaws.com/dummy/places/cafe_12.png';
 
 const STEPS = [
   {
@@ -68,7 +75,7 @@ const OwnerPage = () => {
   }, []);
 
   return (
-    <main className="mx-auto min-h-dvh max-w-[1440px] overflow-hidden bg-white text-black md:[zoom:0.8]">
+    <main className="owner-page mx-auto min-h-dvh max-w-[1440px] overflow-hidden bg-white text-black md:[zoom:0.8]">
       <div className="bg-gradient-to-b from-primary-10 to-white">
         <OwnerHeader />
         <section className="mx-auto flex max-w-[1200px] flex-col gap-8 px-5 pt-8 pb-16 md:flex-row md:items-center md:justify-between md:px-10 md:pt-16 xl:px-0">
@@ -216,7 +223,12 @@ const OwnerPage = () => {
           </div>
           <div className="overflow-hidden rounded-2xl bg-white">
             <div className="flex gap-4 p-5">
-              <div className="h-[86px] w-[104px] rounded-lg bg-grey-2" />
+              <img
+                src={DAJEONG_CAFE_IMAGE}
+                alt="다정카페 내부"
+                className="h-[86px] w-[104px] shrink-0 rounded-lg object-cover"
+                loading="lazy"
+              />
               <div>
                 <h3 className="text-[22px] font-bold">다정카페</h3>
                 <p className="text-grey-5">동대문구 제기로 12 · 0.4km</p>
@@ -264,9 +276,11 @@ const OwnerPage = () => {
               휴대폰 카메라로 QR을 찍어 모바일 화면을 열어보세요.
             </p>
           </div>
-          <div className="flex size-28 items-center justify-center rounded-xl bg-grey-1 text-xl font-bold text-grey-5">
-            QR
-          </div>
+          <img
+            src={ownerQr}
+            alt="휴대폰에서 오작교를 여는 QR 코드"
+            className="size-28 object-contain"
+          />
         </section>
       </div>
     </main>
@@ -274,4 +288,3 @@ const OwnerPage = () => {
 };
 
 export default OwnerPage;
-import { useEffect } from 'react';
