@@ -4,6 +4,7 @@ import IcCallLarge from '@/shared/assets/icons/ic-call-large.svg?react';
 import { cn } from '@/shared/utils/cn';
 
 interface CallConfirmModalProps extends HTMLAttributes<HTMLDivElement> {
+  isLoading?: boolean;
   onConfirm?: () => void;
   onReject?: () => void;
   title?: string;
@@ -12,6 +13,7 @@ interface CallConfirmModalProps extends HTMLAttributes<HTMLDivElement> {
 const CallConfirmModal = ({
   onConfirm,
   onReject,
+  isLoading = false,
   title = '통화를 하셨나요?',
   className,
   ...props
@@ -39,6 +41,7 @@ const CallConfirmModal = ({
       <div className="flex w-full gap-2">
         <button
           type="button"
+          disabled={isLoading}
           className="flex-1 rounded-lg bg-grey-6 px-5 py-2.5 text-title-m-18 text-grey-1"
           onClick={onReject}
         >
@@ -46,10 +49,11 @@ const CallConfirmModal = ({
         </button>
         <button
           type="button"
+          disabled={isLoading}
           className="flex-1 rounded-lg bg-primary-100 px-5 py-2.5 text-title-m-18 text-white"
           onClick={onConfirm}
         >
-          네, 했어요
+          {isLoading ? '처리 중...' : '네, 했어요'}
         </button>
       </div>
     </div>
