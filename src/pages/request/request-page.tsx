@@ -116,11 +116,9 @@ const RequestPage = () => {
           <CallConfirmModal
             onReject={() => setCallingIndex(null)}
             onConfirm={() => {
-              const selectedIndex = callingIndex;
+              // 통화를 마쳤으면 만날 곳을 고르도록 안심장소로 이어져요.
               setCallingIndex(null);
-              navigate(
-                ROUTES.PROFILE.replace(':requestId', String(selectedIndex + 1)),
-              );
+              navigate(ROUTES.PLACE);
             }}
             onClick={(event) => event.stopPropagation()}
           />
