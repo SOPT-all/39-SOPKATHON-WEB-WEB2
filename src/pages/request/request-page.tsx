@@ -86,7 +86,7 @@ const RequestPage = () => {
     <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
       <header className="flex shrink-0 items-center justify-between gap-2 px-5 pt-5 pb-4">
         <h1 className="shrink-0 text-title-b-22">받은 쪽지</h1>
-        <p className="text-right text-text-m-14 text-grey-4">
+        <p className="truncate text-right text-title-m-16 text-grey-4">
           나에게 쪽지를 보낸 사람들이에요.
         </p>
       </header>
