@@ -185,6 +185,50 @@
   animation: owner-heart 2.4s ease-in-out infinite;
 }
 
+@keyframes owner-message-typing {
+  0%,
+  10% {
+    width: 0;
+  }
+
+  55%,
+  82% {
+    width: 100%;
+  }
+
+  100% {
+    width: 0;
+  }
+}
+
+@keyframes owner-message-send {
+  0%,
+  66%,
+  100% {
+    transform: scale(1);
+  }
+
+  72% {
+    transform: scale(0.97);
+  }
+
+  78% {
+    transform: scale(1);
+  }
+}
+
+.owner-message-typing {
+  display: block;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: owner-message-typing 5s steps(12, end) infinite;
+}
+
+.owner-message-send {
+  animation: owner-message-send 5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     opacity: 1;
@@ -194,7 +238,13 @@
 
   .motion-float,
   .motion-float-delayed,
-  .motion-heart {
+  .motion-heart,
+  .owner-message-typing,
+  .owner-message-send {
     animation: none;
+  }
+
+  .owner-message-typing {
+    width: 100%;
   }
 }

@@ -80,10 +80,12 @@ const PhonePreview = ({ large = false, type }: PhonePreviewProps) => {
               <br /> 짧은 쪽지를 작성해주세요
             </h3>
             <div className="absolute top-[160px] left-[20px] flex h-[149px] w-[335px] flex-col justify-between rounded-[10px] border border-grey-4 p-5 text-base font-medium text-grey-4">
-              <span>쪽지 내용을 작성해주세요</span>
+              <span className="owner-message-typing text-grey-10">
+                같이 산책하실래요?
+              </span>
               <span className="text-right">(0/50)</span>
             </div>
-            <button className="absolute top-[528px] left-[20px] w-[335px] rounded-[10px] bg-grey-5 py-4 text-lg font-semibold text-white">
+            <button className="owner-message-send absolute top-[528px] left-[20px] w-[335px] rounded-[10px] bg-grey-5 py-4 text-lg font-semibold text-white">
               쪽지 보내기
             </button>
           </>
