@@ -27,11 +27,15 @@ const MatchingPage = () => {
   };
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col">
+    <main className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col overflow-x-hidden overflow-y-auto">
       <MatchingAppBar />
       <h1 className="sr-only">매칭 상대</h1>
-      <div className="min-h-0 flex-1 [scrollbar-width:none] overflow-x-hidden overflow-y-auto">
-        <div className="relative mt-2.75 h-99.5" aria-label="매칭 카드">
+      {/* 로고는 위에, 안내와 버튼은 아래에 붙어 있어요. 카드는 그 사이 남는 공간의 가운데에 놓여요. */}
+      <div className="flex flex-1 flex-col justify-center">
+        <div
+          className="relative mt-2.75 mb-6.75 h-89.5 shrink-0"
+          aria-label="매칭 카드"
+        >
           {[
             -1,
             ...MATCHING_PREVIEW_PROFILES.map((_, index) => index),
@@ -84,7 +88,7 @@ const MatchingPage = () => {
           })}
         </div>
       </div>
-      <div className="flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
+      <div className="relative flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
         <p className="text-center text-text-m-14 text-grey-4">
           당신과 가까이 있는 데이트 상대에요!
         </p>
