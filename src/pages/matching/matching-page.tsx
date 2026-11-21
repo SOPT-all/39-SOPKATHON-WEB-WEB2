@@ -3,6 +3,7 @@ import { generatePath, useNavigate } from 'react-router';
 
 import MatchingCard from '@/pages/matching/components/matching-card';
 import { getMatches } from '@/pages/matching/api/get-matches';
+import { skipMatch } from '@/pages/matching/api/skip-match';
 import MatchingAppBar from '@/shared/components/matching-app-bar';
 import ServiceEntryButton from '@/shared/components/service-entry-button';
 import type { MatchingProfile } from '@/shared/types/matching-profile';
@@ -12,16 +13,21 @@ import { cn } from '@/shared/utils/cn';
 const MatchingPage = () => {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<MatchingProfile[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [skipError, setSkipError] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>(
     'loading',
   );
   const [attempt, setAttempt] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     getMatches(controller.signal)
       .then((result) => {
         if (controller.signal.aborted) return;
         setProfiles(result.profiles);
+        setHasMore(result.hasNext);
+        setActiveIndex(0);
         setStatus('ready');
       })
       .catch(() => {
@@ -29,19 +35,36 @@ const MatchingPage = () => {
       });
     return () => controller.abort();
   }, [attempt]);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [isAdvancing, setIsAdvancing] = useState(false);
-  const currentIndex = activeIndex + (isAdvancing ? 1 : 0);
+  const currentIndex = activeIndex;
   const hasNext = activeIndex < profiles.length;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!hasNext || isAdvancing) return;
     setIsAdvancing(true);
-  };
-
-  const handleTransitionEnd = () => {
-    if (!isAdvancing) return;
-    setActiveIndex((index) => index + 1);
+    setSkipError(false);
+    setActiveIndex(activeIndex + 1);
+    try {
+      await skipMatch(profiles[activeIndex].id);
+    } catch {
+      setActiveIndex(activeIndex);
+      setSkipError(true);
+      setIsAdvancing(false);
+      return;
+    }
+    if (hasMore && profiles.length - activeIndex <= 2) {
+      try {
+        const next = await getMatches();
+        const known = new Set(profiles.map((profile) => profile.id));
+        setProfiles([
+          ...profiles,
+          ...next.profiles.filter((profile) => !known.has(profile.id)),
+        ]);
+        setHasMore(next.hasNext);
+      } catch {
+        if (activeIndex + 1 === profiles.length) setStatus('error');
+      }
+    }
     setIsAdvancing(false);
   };
 
@@ -50,7 +73,7 @@ const MatchingPage = () => {
       <main className="flex flex-1 flex-col">
         <MatchingAppBar />
         <div className="m-auto text-center" role="status">
-          {status === 'loading'
+          {status === 'loading' || isAdvancing
             ? '상대를 찾고 있어요.'
             : status === 'error'
               ? '매칭 상대를 불러오지 못했어요.'
@@ -95,14 +118,6 @@ const MatchingPage = () => {
                   style={{
                     transform: `translateX(calc(${offset * 100}% + ${offset * 16}px)) translateY(${offset === 0 ? 0 : 40}px)`,
                   }}
-                  onTransitionEnd={(event) => {
-                    if (
-                      event.target === event.currentTarget &&
-                      event.propertyName === 'transform' &&
-                      index === activeIndex
-                    )
-                      handleTransitionEnd();
-                  }}
                 >
                   {profile && (
                     <MatchingCard
@@ -130,6 +145,11 @@ const MatchingPage = () => {
         </div>
       </div>
       <div className="relative flex w-full max-w-93.75 shrink-0 flex-col gap-2 self-center pb-4.75">
+        {skipError && (
+          <p role="alert" className="text-center">
+            넘기지 못했어요. 다시 시도해 주세요.
+          </p>
+        )}
         <p className="text-center text-text-m-14 text-grey-4">
           당신과 가까이 있는 데이트 상대에요!
         </p>
