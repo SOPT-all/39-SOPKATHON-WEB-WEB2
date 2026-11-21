@@ -10,8 +10,9 @@ interface BirthYearSheetProps {
   onSubmit: (year: number) => void;
 }
 
-const FIRST_YEAR = 1930;
-const LAST_YEAR = 1980;
+// 1900년부터 올해까지 모두 고를 수 있어요.
+const FIRST_YEAR = 1900;
+const LAST_YEAR = new Date().getFullYear();
 const DEFAULT_YEAR = 1960;
 const YEARS = Array.from(
   { length: LAST_YEAR - FIRST_YEAR + 1 },
@@ -20,6 +21,13 @@ const YEARS = Array.from(
 
 // 한 줄 높이(43px)에 줄 사이 간격(4px)을 더한 값이에요. 아래 클래스의 h-10.75, gap-1과 맞춰요.
 const ROW_PITCH = 47;
+// 휠을 연달아 굴릴 때 한 칸씩 넘어가는 최소 간격이에요.
+const WHEEL_STEP_MS = 70;
+const WHEEL_IDLE_MS = 300;
+const VIBRATE_MS = 8;
+
+const clampIndex = (index: number) =>
+  Math.min(Math.max(index, 0), YEARS.length - 1);
 
 // 태어난 년도를 고르는 바텀시트예요.
 // 가운데 회색 칸은 고정되어 있고, 목록을 굴려서 가운데에 온 년도가 선택돼요.
@@ -38,12 +46,47 @@ const BirthYearSheet = ({
     listRef.current?.scrollTo({ top: index * ROW_PITCH });
   }, [initialYear]);
 
+  // 마우스 휠은 한 번 굴릴 때마다 정확히 한 칸씩 움직여요.
+  useEffect(() => {
+    const list = listRef.current;
+
+    if (!list) return;
+
+    let targetIndex = 0;
+    let lastWheelAt = 0;
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault();
+
+      const now = Date.now();
+
+      if (now - lastWheelAt < WHEEL_STEP_MS) return;
+
+      // 한동안 쉬었다가 다시 굴리면 지금 위치에서 시작해요.
+      if (now - lastWheelAt > WHEEL_IDLE_MS) {
+        targetIndex = Math.round(list.scrollTop / ROW_PITCH);
+      }
+
+      lastWheelAt = now;
+      targetIndex = clampIndex(targetIndex + Math.sign(event.deltaY));
+      list.scrollTo({ top: targetIndex * ROW_PITCH, behavior: 'smooth' });
+    };
+
+    list.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => list.removeEventListener('wheel', handleWheel);
+  }, []);
+
   // 굴릴 때마다 가운데에 가장 가까운 년도를 선택해요.
   const handleScroll = (event: UIEvent<HTMLUListElement>) => {
     const index = Math.round(event.currentTarget.scrollTop / ROW_PITCH);
-    const year = YEARS[Math.min(Math.max(index, 0), YEARS.length - 1)];
+    const year = YEARS[clampIndex(index)];
+
+    if (year === selectedYear) return;
 
     setSelectedYear(year);
+    // 진동을 지원하는 휴대폰에서는 년도가 바뀔 때마다 짧게 울려요.
+    navigator.vibrate?.(VIBRATE_MS);
   };
 
   // 년도를 누르면 그 년도가 가운데로 굴러와요.
@@ -100,9 +143,9 @@ const BirthYearSheet = ({
                     type="button"
                     aria-pressed={isSelected}
                     className={cn(
-                      'h-10.75 w-full text-center',
+                      'h-10.75 w-full text-center transition-[scale,color] duration-150 ease-out',
                       isSelected
-                        ? 'text-title-sb-18 text-black'
+                        ? 'scale-115 text-title-sb-18 text-black'
                         : 'text-title-m-18 text-grey-2',
                     )}
                     onClick={() => handleYearClick(year)}
